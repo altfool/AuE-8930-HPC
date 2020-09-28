@@ -7,9 +7,10 @@ def solution(list, num):
         if num-val in mylist:
             a = num - val
             b = val
+            return a, b
         else:
             mylist.append(val)
-    return a, b 
+    return None
   
 numbers = [0, 21, 78, 19, 90, 13] 
 print(solution(numbers, 21)) 
