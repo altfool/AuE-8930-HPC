@@ -6,6 +6,9 @@ class TreeNode(object):
         self.right = None
 def solution(root):
     '''type in your solution'''
+    if root == None:
+        return 0
+    depth = 1 + max(solution(root.left), solution(root.right))
     return depth
 
 a15=TreeNode(15)

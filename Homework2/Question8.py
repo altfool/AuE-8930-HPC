@@ -8,10 +8,16 @@ fre  = 5
 fre_samp = 50
 t = np.linspace(0, 2, 2 * fre_samp, endpoint = False )
 a = np.sin(fre  * 2 * np.pi * t)
-figure, axis = plt.subplots()
-axis.plot(t, a)
-axis.set_xlabel ('Time (s)')
-axis.set_ylabel ('Signal amplitude')
-plt.show()
+figure, (axis1, axis2) = plt.subplots(1, 2)
+axis1.plot(t, a)
+axis1.set_xlabel ('Time (s)')
+axis1.set_ylabel ('Signal amplitude')
+axis1.set_title("original signal")
+# plt.show()
 
 #do DFT and visualize:
+af = scipy.fft.fft(a)
+t_at = np.linspace(0, fre/2, fre_samp)
+axis2.plot(t_at, np.abs(af[:fre_samp]))
+axis2.set_title("dft signal")
+plt.show()
