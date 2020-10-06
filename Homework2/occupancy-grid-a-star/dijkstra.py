@@ -31,7 +31,7 @@ def _get_movements_8n():
 
 def dijkstra(start_m, goal_m, gmap, movement='8N', occupancy_cost_factor=3):
     totalNodes = gmap.dim_cells[0] * gmap.dim_cells[1]
-    # totalNodes = 200
+    totalNodes = 10800
     path_record = {}
     candidates = queue.PriorityQueue()
 
@@ -57,7 +57,9 @@ def dijkstra(start_m, goal_m, gmap, movement='8N', occupancy_cost_factor=3):
     candidates.put((0, start, start))   # store (distance, previous-node, current-node)
     while candidates and count < totalNodes:
         dis, prev_node, curr_node = candidates.get()
+        print(curr_node, "\t", goal)
         if curr_node == goal:
+            print(True)
             path_record[curr_node] = (prev_node, dis)
             break
         if curr_node in path_record:
@@ -77,7 +79,7 @@ def dijkstra(start_m, goal_m, gmap, movement='8N', occupancy_cost_factor=3):
             if not gmap.is_inside_idx(new_node) or gmap.is_occupied_idx(new_node):
                 continue
             if new_node not in path_record:
-                candidates.put((dis+dist2d(curr_node, new_node), curr_node, new_node))
+                candidates.put((dis+deltacost, curr_node, new_node))
 
     # reconstruct path backwards (only if we reached the goal)
     path = []
@@ -93,6 +95,8 @@ def dijkstra(start_m, goal_m, gmap, movement='8N', occupancy_cost_factor=3):
         # reverse so that path is from start to goal.
         path.reverse()
         path_idx.reverse()
+
+    print("path_idx:\n", path_idx)
     return path, path_idx
 
 
