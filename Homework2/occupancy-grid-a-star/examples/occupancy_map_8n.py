@@ -29,7 +29,7 @@ def plan(event):
         goal_node = (event.x, canvas_height-event.y)
         cv.create_oval( event.x-5, event.y-5, event.x+5, event.y+5, fill = "red" )
         # path, path_px = a_star(start_node, goal_node, gmap, movement='8N')
-        path, path_px = dijkstra(start_node, goal_node, gmap, movement='8N')
+        path, path_px = dijkstra(start_node, goal_node, gmap, movement='4N')
         if path:
             # plot resulting path in pixels over the map
             plot_on_canvas(path_px, cv)
