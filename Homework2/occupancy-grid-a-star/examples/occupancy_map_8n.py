@@ -28,19 +28,25 @@ def plan(event):
     else:
         goal_node = (event.x, canvas_height-event.y)
         cv.create_oval( event.x-5, event.y-5, event.x+5, event.y+5, fill = "red" )
-        # path, path_px = a_star(start_node, goal_node, gmap, movement='8N')
-        path, path_px = dijkstra(start_node, goal_node, gmap, movement='4N')
+        path, path_px = a_star(start_node, goal_node, gmap, movement='8N')
         if path:
             # plot resulting path in pixels over the map
-            plot_on_canvas(path_px, cv)
+            plot_on_canvas(path_px, cv, color="yellow", width=4)
+        else:
+            print('Goal is not reachable')
+        path, path_px = dijkstra(start_node, goal_node, gmap, movement='8N')
+        if path:
+            # plot resulting path in pixels over the map
+            plot_on_canvas(path_px, cv, color="purple", width=2)
         else:
             print('Goal is not reachable')
 
-def plot_on_canvas(path, cv):
+
+def plot_on_canvas(path, cv, color="yellow", width=3):
     # plot path
-    cv.create_line( path[0][0], canvas_height-path[0][1], path[1][0], canvas_height-path[1][1], fill="yellow", width=3)
+    cv.create_line( path[0][0], canvas_height-path[0][1], path[1][0], canvas_height-path[1][1], fill=color, width=width)
     for i in range(1, len(path)):
-        cv.create_line( path[i-1][0], canvas_height-path[i-1][1], path[i][0], canvas_height-path[i][1], fill="yellow", width=3)
+        cv.create_line( path[i-1][0], canvas_height-path[i-1][1], path[i][0], canvas_height-path[i][1], fill=color, width=width)
 
 
 

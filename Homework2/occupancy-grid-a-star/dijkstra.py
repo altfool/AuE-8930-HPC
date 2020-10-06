@@ -1,7 +1,5 @@
 import math
-from heapq import heappush, heappop
 import queue
-from utils import dist2d
 
 def _get_movements_4n():
     """
@@ -12,7 +10,6 @@ def _get_movements_4n():
             (0, 1, 1.0),
             (-1, 0, 1.0),
             (0, -1, 1.0)]
-
 
 def _get_movements_8n():
     """
@@ -30,8 +27,7 @@ def _get_movements_8n():
             (1, -1, s2)]
 
 def dijkstra(start_m, goal_m, gmap, movement='8N', occupancy_cost_factor=3):
-    totalNodes = gmap.dim_cells[0] * gmap.dim_cells[1]
-    totalNodes = 10800
+    # totalNodes = gmap.dim_cells[0] * gmap.dim_cells[1]
     path_record = {}
     candidates = queue.PriorityQueue()
 
@@ -53,19 +49,17 @@ def dijkstra(start_m, goal_m, gmap, movement='8N', occupancy_cost_factor=3):
     else:
         raise ValueError('Unknown movement')
 
-    count = 0
-    candidates.put((0, start, start))   # store (distance, previous-node, current-node)
-    while candidates and count < totalNodes:
+    candidates.put((0, None, start))   # store (distance, previous-node, current-node)
+    while candidates:
         dis, prev_node, curr_node = candidates.get()
-        print(curr_node, "\t", goal)
+        # print(curr_node, "\t", goal)
         if curr_node == goal:
-            print(True)
-            path_record[curr_node] = (prev_node, dis)
+            # print(True)
+            path_record[curr_node] = prev_node
             break
         if curr_node in path_record:
             continue
-        path_record[curr_node] = (prev_node, dis)
-        count += 1
+        path_record[curr_node] = prev_node
 
         # check all neighbors
         for dx, dy, deltacost in movements:
@@ -80,10 +74,11 @@ def dijkstra(start_m, goal_m, gmap, movement='8N', occupancy_cost_factor=3):
                 continue
             if new_node not in path_record:
                 candidates.put((dis+deltacost, curr_node, new_node))
-
     # reconstruct path backwards (only if we reached the goal)
     path = []
     path_idx = []
+    # print(len(path_record))
+    # print(path_record)
     if goal in path_record:
         node = goal
         while node:
@@ -91,12 +86,13 @@ def dijkstra(start_m, goal_m, gmap, movement='8N', occupancy_cost_factor=3):
             # transform array indices to meters
             node_m_x, node_m_y = gmap.get_coordinates_from_index(node[0], node[1])
             path.append((node_m_x, node_m_y))
-            node = path_record[node][0]
+            node = path_record[node]
         # reverse so that path is from start to goal.
         path.reverse()
         path_idx.reverse()
 
-    print("path_idx:\n", path_idx)
+    # print("path_idx len: ", len(path_idx))
+    # print("path_idx:\n", path_idx)
     return path, path_idx
 
 
