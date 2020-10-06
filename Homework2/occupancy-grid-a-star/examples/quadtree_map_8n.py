@@ -7,14 +7,16 @@ import matplotlib.pyplot as plt
 from a_star import a_star
 from dijkstra import dijkstra
 from utils import plot_path
+from quadtreemap import QuadTreeMap
 
 
 canvas_width = 425
 canvas_height = 420
 start_node = (360.0, 330.0)
 goal_node = (285.0, 86.0)
-# gmap = OccupancyGridMap.from_png('maps/example_map_binary.png', 1)
-gmap = OccupancyGridMap.from_png('maps/example_map_occupancy.png', 1)
+filename = 'maps/example_map_binary.png'
+# filename = 'maps/example_map_occupancy.png'
+qtmap = QuadTreeMap.from_png(filename, cell_size=10, occupancy_threshold=0.6, tile_capacity=20)
 click = 0
 
 def plan(event):
@@ -61,7 +63,7 @@ if __name__ == '__main__':
     cv = Canvas(window, width=canvas_width, height=canvas_height)
     cv.pack(side='top', fill='both', expand='yes')
     cv.create_image(0, 0, image=img, anchor='nw')
-
+    qtmap.drawQuadTreeMapByCanvas(cv, canvas_height, color="gray", width=2)
     cv.bind( "<Button-1>", plan )
 
     window.mainloop()
