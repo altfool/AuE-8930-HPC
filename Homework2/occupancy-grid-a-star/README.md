@@ -19,3 +19,9 @@ Two examples are given for both binary and occupancy grid maps, each one with di
 
 [1]: https://en.wikipedia.org/wiki/A*_search_algorithm
 [2]: https://www.youtube.com/playlist?list=PLpUPoM7Rgzi_7YWn14Va2FODh7LzADBSm
+
+## Demos:
+### occupancy-grid map
+![](/Homework2/occupancy-grid-a-star/examples/demo_screenshots/occupancy_map.png)
+### quadtree map
+![](/Homework2/occupancy-grid-a-star/examples/demo_screenshots/quadtree_map.png)
