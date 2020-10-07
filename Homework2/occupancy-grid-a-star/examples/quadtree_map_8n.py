@@ -38,7 +38,7 @@ def plan(event):
         if path_px:
             # plot resulting path in pixels over the map
             # plot_on_canvas(path_px, cv, color="purple", width=2)
-            draw_listOfTiles_on_canvas(path_px, cv, color="blue", width=3)
+            draw_listOfTiles_on_canvas(path_px, cv, color="purple", width=3)
         else:
             print('Goal is not reachable')
 
