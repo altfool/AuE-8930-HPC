@@ -26,7 +26,7 @@ def _get_movements_8n():
             (-1, -1, s2),
             (1, -1, s2)]
 
-def dijkstra(start_m, goal_m, gmap, movement='8N', occupancy_cost_factor=3):
+def dijkstra_occupancy(start_m, goal_m, gmap, movement='8N', occupancy_cost_factor=3):
     # totalNodes = gmap.dim_cells[0] * gmap.dim_cells[1]
     path_record = {}
     candidates = queue.PriorityQueue()

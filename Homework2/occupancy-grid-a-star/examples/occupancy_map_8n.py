@@ -1,12 +1,10 @@
 import sys
 sys.path.append('..')
 from tkinter import *
-import numpy
 from gridmap import OccupancyGridMap
-import matplotlib.pyplot as plt
-from a_star import a_star
-from dijkstra import dijkstra
-from utils import plot_path
+from a_star_occupancy import a_star_occupancy
+from dijkstra_occupancy import dijkstra_occupancy
+import copy
 
 
 canvas_width = 425
@@ -29,14 +27,14 @@ def plan(event):
     else:
         goal_node = (event.x, canvas_height-event.y)
         cv.create_oval( event.x-5, event.y-5, event.x+5, event.y+5, fill = "red" )
-        path, path_px = a_star(start_node, goal_node, gmap, movement='8N')
-        if path:
+        path, path_px = a_star_occupancy(start_node, goal_node, copy.deepcopy(gmap), movement='8N')
+        if path_px:
             # plot resulting path in pixels over the map
             plot_on_canvas(path_px, cv, color="yellow", width=4)
         else:
             print('Goal is not reachable')
-        path, path_px = dijkstra(start_node, goal_node, gmap, movement='8N')
-        if path:
+        path, path_px = dijkstra_occupancy(start_node, goal_node, gmap, movement='8N')
+        if path_px:
             # plot resulting path in pixels over the map
             plot_on_canvas(path_px, cv, color="purple", width=2)
         else:

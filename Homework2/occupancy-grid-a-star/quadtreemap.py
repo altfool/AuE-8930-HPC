@@ -4,11 +4,16 @@
 
 from utils import png_to_ogm
 import numpy as np
+import math
 
 class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    @staticmethod
+    def disOf2Points(point1, point2):
+        return math.sqrt((point1.x-point2.x)**2+(point1.y-point2.y)**2)
 
 class BoundingBox:
     def __init__(self, x0, y0, width, height):
@@ -38,6 +43,15 @@ class Tile:
         self.botleft = None
         self.botright = None
 
+    def __lt__(self, other):
+        return self.tile_points_len < other.tile_points_len
+
+    def __eq__(self, other):
+        return (id(self) == id(other))
+
+    def __hash__(self):
+        return id(self)
+
     def insert(self, point):
         if not self.boundary.containsPoint(point):
             return False
@@ -58,10 +72,6 @@ class Tile:
         return False
 
     def __subdivide(self):
-        # self.topleft = Tile(self.boundary.x0, self.boundary.y0, self.boundary.width/2, self.boundary.height/2, self.tile_capacity)
-        # self.topright = Tile(self.boundary.x0+self.boundary.width/2, self.boundary.y0, self.boundary.width/2, self.boundary.height/2, self.tile_capacity)
-        # self.botleft = Tile(self.boundary.x0, self.boundary.y0+self.boundary.height/2, self.boundary.width/2, self.boundary.height/2, self.tile_capacity)
-        # self.botright = Tile(self.boundary.x0+self.boundary.width/2, self.boundary.y0+self.boundary.height/2, self.boundary.width/2, self.boundary.height/2, self.tile_capacity)
         self.topleft = Tile(self.boundary.x0, self.boundary.y0, self.boundary.width/2, self.boundary.height/2, self.tile_capacity)
         self.topright = Tile(self.boundary.x0+self.boundary.width/2, self.boundary.y0, self.boundary.width/2, self.boundary.height/2, self.tile_capacity)
         self.botleft = Tile(self.boundary.x0, self.boundary.y0+self.boundary.height/2, self.boundary.width/2, self.boundary.height/2, self.tile_capacity)
@@ -74,6 +84,43 @@ class Tile:
         self.tile_points = []
         self.tile_points_len = 0
 
+    def getCenter(self):
+        return self.boundary.center()
+
+    def searchTileByIdx(self, point):
+        if not self.boundary.containsPoint(point):
+            return None
+        if not self.topleft:
+            return self
+        if self.topleft.boundary.containsPoint(point):
+            return self.topleft.searchTileByIdx(point)
+        if self.topright.boundary.containsPoint(point):
+            return self.topright.searchTileByIdx(point)
+        if self.botleft.boundary.containsPoint(point):
+            return self.botleft.searchTileByIdx(point)
+        if self.botright.boundary.containsPoint(point):
+            return self.botright.searchTileByIdx(point)
+        return None
+
+    def tileIntersect(self, otherBB: BoundingBox) -> list:
+        intescList = []
+        if not self.boundary.intersectsBB(otherBB):
+            return intescList
+        if not self.topleft:
+            intescList.append(self)
+            return intescList
+        else:
+            # print("all childrens: {}\t{}\t{}\t{}".format(self.topleft, self.topright, self.botleft, self.botright))
+            # print("topleft: ", self.topleft.tileIntersect(otherBB))
+            intescList += self.topleft.tileIntersect(otherBB)
+            # print("topright: ", self.topright.tileIntersect(otherBB))
+            intescList += self.topright.tileIntersect(otherBB)
+            # print("botleft: ", self.botleft.tileIntersect(otherBB))
+            intescList += self.botleft.tileIntersect(otherBB)
+            # print("botright: ", self.botright.tileIntersect(otherBB))
+            intescList += self.botright.tileIntersect(otherBB)
+        return intescList
+
     def queryRange(self, otherBB: BoundingBox):
         pointsInRange = []
         if not self.boundary.intersectsBB(otherBB):
@@ -83,10 +130,10 @@ class Tile:
                 if otherBB.containsPoint(point):
                     pointsInRange.append(point)
             return pointsInRange
-        pointsInRange.append(self.topleft.queryRange(otherBB))
-        pointsInRange.append(self.topright.queryRange(otherBB))
-        pointsInRange.append(self.botleft.queryRange(otherBB))
-        pointsInRange.append(self.botright.queryRange(otherBB))
+        pointsInRange += self.topleft.queryRange(otherBB)
+        pointsInRange += self.topright.queryRange(otherBB)
+        pointsInRange += self.botleft.queryRange(otherBB)
+        pointsInRange += self.botright.queryRange(otherBB)
         return pointsInRange
 
     def drawTileByCanvas(self, cv, canvas_height, color="gray", width=2):
