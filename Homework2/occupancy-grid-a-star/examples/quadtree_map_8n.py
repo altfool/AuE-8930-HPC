@@ -12,7 +12,7 @@ start_node = (360.0, 330.0)
 goal_node = (285.0, 86.0)
 filename = 'maps/example_map_binary.png'
 # filename = 'maps/example_map_occupancy.png'
-qtmap = QuadTreeMap.from_png(filename, cell_size=1, occupancy_threshold=0.6, tile_capacity=20)
+qtmap = QuadTreeMap.from_png(filename, cell_size=1, occupancy_threshold=0.6, tile_capacity=100)
 click = 0
 
 def plan(event):
