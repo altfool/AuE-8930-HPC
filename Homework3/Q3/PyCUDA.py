@@ -1,3 +1,4 @@
+import time
 import numpy
 import pycuda.driver as cuda
 import pycuda.autoinit
@@ -78,8 +79,6 @@ def gpu_enhanceImage(pic):
       temp = min(temp, 256 - 1)
       hist_rgb[intensity] = temp
 
-    # print(hist_rgb)
-
     # enhance the picture according to the inversed histgram
     cuda.memcpy_htod(hist_rgb_gpu, hist_rgb)
 
@@ -99,9 +98,12 @@ def main():
     img_path = './mycat.png'
     myimg = Image.open(img_path).convert('RGB')
     width, height = myimg.size
+    start = time.time()
     enhancedPic = gpu_enhanceImage(myimg)
+    end = time.time()
+    print("GPU Time: %.5f s" % (end - start))
     enhancedPic = enhancedPic.resize((width, height))
-    enhancedPic.save('./enhanced_mycat.png')
+    enhancedPic.save('./gpu_mycat.png')
 
 if __name__ == '__main__':
     main()
