@@ -70,7 +70,23 @@ for i in range(3):
 # copy back the result 
 cuda.memcpy_dtoh(c, c_gpu) 
 end = time.time() 
-print ("Time: %.5f s"%(end-start))
+print ("GPU Time: %.5f s"%(end-start))
+c_gpu_version = np.copy(c)
+
+# call gpu function
+start = time.time()
+for i in range(3):
+    c = np.matmul(a, b)
+
+end = time.time()
+print ("CPU Time: %.5f s"%(end-start))
+c_cpu_version = np.copy(c)
+
+if c_cpu_version == c_gpu_version:
+    print("the results from GPU and CPU are the same.")
+else:
+    diff = np.sqrt(np.sum((c_cpu_version-c_gpu_version)**2))
+    print("the Euclidean Distance of 2 matrix is: {}".format(diff))
 
 
 
