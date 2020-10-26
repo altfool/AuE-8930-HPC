@@ -1,7 +1,7 @@
 import numpy
-import pycuda.driver as cuda 
-import pycuda.autoinit 
-from pycuda.compiler import SourceModule 
+import pycuda.driver as cuda
+import pycuda.autoinit
+from pycuda.compiler import SourceModule
 from PIL import Image
 
 module = SourceModule("""
@@ -17,7 +17,7 @@ module = SourceModule("""
 
       __syncthreads();
 
-      int pixel = pix[idx];
+      unsigned char pixel = pix[idx];
       atomicAdd((float *)&local_hist[pixel], 256.0/total);
    
       __syncthreads(); 
@@ -29,22 +29,22 @@ module = SourceModule("""
     {
       int idx = threadIdx.x + blockDim.x * blockIdx.x;
       if(idx >= total) return;
-      int pixel = pix[idx];
-      pix[idx] = (int)(hist_rgb[pixel]);
+      unsigned char pixel = pix[idx];
+      pix[idx] = (unsigned char)(hist_rgb[pixel]);
     }
     """)
 
 histograms = module.get_function("histograms")
 enhance = module.get_function("enhance")
 
-
 THREADS_PER_BLOCK = 512
 
 def gpu_enhanceImage(pic):
     # convert to array
     pix = numpy.array(pic)
-    width, height = pic.size
-    total = width*height
+    # width, height = pic.size
+    # total = width*height
+    total = pix.size
 
     # ------------------------------------------------
     # accelerate the following part as much as possible using GPU
@@ -78,6 +78,8 @@ def gpu_enhanceImage(pic):
       temp = min(temp, 256 - 1)
       hist_rgb[intensity] = temp
 
+    # print(hist_rgb)
+
     # enhance the picture according to the inversed histgram
     cuda.memcpy_htod(hist_rgb_gpu, hist_rgb)
 
@@ -95,7 +97,7 @@ def gpu_enhanceImage(pic):
 
 def main():
     img_path = './mycat.png'
-    myimg = Image.open(img_path)
+    myimg = Image.open(img_path).convert('RGB')
     width, height = myimg.size
     enhancedPic = gpu_enhanceImage(myimg)
     enhancedPic = enhancedPic.resize((width, height))
