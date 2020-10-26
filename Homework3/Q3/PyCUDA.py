@@ -1,3 +1,9 @@
+import numpy
+import pycuda.driver as cuda 
+import pycuda.autoinit 
+from pycuda.compiler import SourceModule 
+from PIL import Image
+
 module = SourceModule("""
     __global__ void histograms(float * hist_rgb, unsigned char * pix, int total)
     {
@@ -26,8 +32,8 @@ module = SourceModule("""
     }
     """)
 
-histograms     = module.get_function("histograms")
-enhance    = module.get_function("enhance")
+histograms = module.get_function("histograms")
+enhance = module.get_function("enhance")
 
 
 THREADS_PER_BLOCK = 512
@@ -84,3 +90,12 @@ def gpu_enhanceImage(pic):
     # save the picture
     pic = Image.fromarray(pix)
     return pic
+
+def main():
+    img_path = './mycat.png'
+    myimg = Image.open(img_path)
+    enhancedPic = gpu_enhanceImage(myimg.getdata())
+    enhancedPic.save('./enhanced_mycat.png')
+
+if __name__ == '__main__':
+    main()
