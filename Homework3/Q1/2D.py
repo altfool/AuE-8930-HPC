@@ -4,9 +4,9 @@ import pycuda.driver as cuda
 import pycuda.autoinit 
 from pycuda.compiler import SourceModule 
 
-BLOCK_SIZE = 32 
+BLOCK_SIZE = 32
 
-n = 1600
+n = 3200
 ni = np.int32(n) 
 
 # matrix A 
@@ -100,7 +100,7 @@ end = time.time()
 print ("CPU Time: %.5f s"%(end-start))
 c_cpu_version = np.copy(c)
 
-if c_cpu_version == c_gpu_version:
+if np.all(c_cpu_version == c_gpu_version):
     print("the results from GPU and CPU are the same.")
 else:
     diff = np.sqrt(np.sum((c_cpu_version-c_gpu_version)**2))
