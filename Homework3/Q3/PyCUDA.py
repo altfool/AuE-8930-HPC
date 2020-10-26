@@ -94,7 +94,9 @@ def gpu_enhanceImage(pic):
 def main():
     img_path = './mycat.png'
     myimg = Image.open(img_path)
+    width, height = myimg.size
     enhancedPic = gpu_enhanceImage(myimg.getdata())
+    enhancedPic = enhancedPic.resize((width, height))
     enhancedPic.save('./enhanced_mycat.png')
 
 if __name__ == '__main__':
