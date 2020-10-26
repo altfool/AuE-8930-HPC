@@ -19,7 +19,9 @@ module = SourceModule("""
 
       int pixel = pix[idx];
       atomicAdd((float *)&local_hist[pixel], 256.0/total);
-
+   
+      __syncthreads(); 
+    
       if(threadIdx.x < 256)
         atomicAdd((float *)&hist_rgb[threadIdx.x], local_hist[threadIdx.x]);
     }
