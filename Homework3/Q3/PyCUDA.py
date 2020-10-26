@@ -92,7 +92,7 @@ def gpu_enhanceImage(pic):
     return pic
 
 def main():
-    img_path = './mycat1.png'
+    img_path = './mycat.png'
     myimg = Image.open(img_path)
     width, height = myimg.size
     enhancedPic = gpu_enhanceImage(myimg)
