@@ -9,12 +9,14 @@ def train(model, device, iterator, optimizer, criterion):
     model.train()
 
     for (x, y) in iterator:
+        # print(x.size())
+        # print(y.size())
         x = x.to(device)
         y = y.to(device)
 
         optimizer.zero_grad()
 
-        fx = model(x)
+        fx = model(x, y)
 
         loss = criterion(fx, y)
 
@@ -41,7 +43,7 @@ def evaluate(model, device, iterator, criterion):
         for (x, y) in iterator:
             x = x.to(device)
             y = y.to(device)
-            fx = model(x)
+            fx = model(x, y)
             loss = criterion(fx, y)
             acc = calculate_accuracy(fx, y)
             epoch_loss += loss.item()

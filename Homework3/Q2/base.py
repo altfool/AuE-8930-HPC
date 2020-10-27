@@ -9,15 +9,15 @@ import common
 #DIRECTORY SETTINGS
 os.chdir("..")#Go up two directories
 DATA_DIR = 'data/bullying'
-SAVE_DIR = 'models'
+SAVE_DIR = './Q2/models'
 MODEL_SAVE_PATH = os.path.join(SAVE_DIR, 'base.pt')
 
 
 #HYPERPARAMETERS
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-EPOCHS=100
-BATCH_SIZE = 32
+EPOCHS=10
+BATCH_SIZE = 512
 criterion = nn.CrossEntropyLoss()
 ADAM_OPTIMISER=True
 LEARNING_RATE=0.001
@@ -71,6 +71,7 @@ model=models.CNN()
 for param in model.parameters():
     param.requires_grad = False
 num_ftrs = model.fc.in_features
+print(num_ftrs)
 model.fc = nn.Linear(num_ftrs, 10)
 model = model.to(device)
 

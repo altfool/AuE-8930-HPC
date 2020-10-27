@@ -1,6 +1,6 @@
 import torch.nn as nn
-
-
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 
 class CNN(nn.Module):
     def __init__(self):
@@ -26,13 +26,26 @@ class CNN(nn.Module):
             nn.BatchNorm2d(64),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
-        self.fc = nn.Linear(1200, 10)
+        # self.fc = nn.Linear(1200, 10)
+        self.fc = nn.Linear(52272, 10)
 
-    def forward(self, x):
+    def forward(self, x, y):
         out = self.layer1(x)
         out = self.layer2(out)
         out = self.layer3(out)
         out = out.reshape(out.size(0), -1)
+        # print(out)
+        mypca = PCA(2)
+        projected = mypca.fit_transform(out.cpu().data)
+        # print(out.shape)
+        # print(projected.shape)
+        plt.scatter(projected[:, 0], projected[:, 1],
+                    c=y.cpu().data, edgecolor='none', alpha=0.5,
+                    cmap='Accent')
+        plt.xlabel('component 1')
+        plt.ylabel('component 2')
+        plt.colorbar()
+        plt.show()
         out = self.fc(out)
         return out
 
@@ -67,7 +80,7 @@ class AlexNet(nn.Module):
             nn.Linear(4096, 10),
         )
 
-    def forward(self, x):
+    def forward(self, x, y):
         x = self.features(x)
         x = self.avgpool(x)
         x = x.view(x.size(0), 256 * 6 * 6)
