@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>  
+  <arg name="map_file" default="$(find turtlebot_gazebo)/maps/playground.yaml"/>  
+  <param name="starting_location" value="0,0"/>
+  <param name="goal_location" value="-3,3"/>
+  <param name="robot_size" value="0.35"/>
+  <param name="map_resolution" value="0.05"/>
+     
+  <!-- Load the map -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" /> 
+
+  <!-- Launch navigation_planner node  -->
+  <node name="navigation_planner" pkg="navigation_planner" type="navigation_planner.py" output="screen"/> 
+</launch>
+
